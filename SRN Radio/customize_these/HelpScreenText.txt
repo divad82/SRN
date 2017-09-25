@@ -1,0 +1,8 @@
+Slide your fingers either left or right to select the station you wish to play.  The app will remebber your choice when you come back to the app the next time.
+
+You can click the name of the station in the info screen to visit the website for the station.
+
+Tap any of the 4 networking buttons at the bottom of the info screen to go to that particular social networking site.  If it does not go, that means the station does not have that page.
+
+The app will always play in the background on all updates iOS devices.  If you hit the stop playing button before you exit the app, it will not play in the background.
+
