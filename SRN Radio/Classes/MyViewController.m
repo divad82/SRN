@@ -937,8 +937,8 @@
 		//NSString *strtemp2=[arrtemp objectAtIndex:0];
 		//NSLog(@"%@",strtemp2);
 		//actmeta=[[strtemp2 componentsSeparatedByString:@"StreamTitle"] objectAtIndex:1];
-		[metaDataLabel1 setTextAlignment:UITextAlignmentCenter];
-		[metaDataLabel2 setTextAlignment:UITextAlignmentCenter];
+        [metaDataLabel1 setTextAlignment:NSTextAlignmentCenter]; //deprecated text alignment UITextAlignmentCenter];
+		[metaDataLabel2 setTextAlignment:NSTextAlignmentCenter]; //deprecated text alignment UITextAlignmentCenter];
 		
 		if (arractmetadata==nil)
 			arractmetadata=[meta componentsSeparatedByString:@" - "];
@@ -1380,8 +1380,8 @@
 	stationLinkLabel.font = [UIFont boldSystemFontOfSize:22];
 	stationLinkLabel.adjustsFontSizeToFitWidth = YES;
 	stationLinkLabel.numberOfLines=1;
-	stationLinkLabel.textAlignment = UITextAlignmentCenter;
-	stationLinkLabel.minimumFontSize=18;
+    stationLinkLabel.textAlignment = NSTextAlignmentCenter;  // update this is dep UITextAlignmentCenter;
+	stationLinkLabel.minimumFontSize=18;  // docs say to use minimumScaleFactor but i don't understand
 
 	// get station name
 	if( (stationLinkLabel.text = [self GetCustomDicValue:[self GetCustomDicKey:@"WebSiteName" order:m_curBroadcastStationID]]) == 0 ) {

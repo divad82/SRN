@@ -464,7 +464,7 @@ void ReadStreamCallBack
 		UInt8 bytes[kAQBufSize];
 		UInt8 bytesNoMetaData[kAQBufSize];
 		CFIndex length = CFReadStreamRead(stream, bytes, kAQBufSize);
-		int lengthNoMetaData = 0;
+		long lengthNoMetaData = 0;
 		
 		if (length == -1)
 		{
@@ -484,7 +484,7 @@ void ReadStreamCallBack
 			{
 				CFHTTPMessageRef myResponse = (CFHTTPMessageRef)CFReadStreamCopyProperty(stream, kCFStreamPropertyHTTPResponseHeader);
 				//////////////////change//////////////////////
-				UInt32 statusCode = CFHTTPMessageGetResponseStatusCode(myResponse);
+				CFIndex statusCode = CFHTTPMessageGetResponseStatusCode(myResponse);
 				
 				//CFStringRef myStatusLine = CFHTTPMessageCopyResponseStatusLine(myResponse);
 				

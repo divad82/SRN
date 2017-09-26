@@ -20,7 +20,7 @@
 
 
 #import "SRNAppDelegate.h"
-#import	"MyViewController.h";
+#import	"MyViewController.h"
 
 @implementation SRNAppDelegate
 

@@ -29,8 +29,8 @@
         [self setStationSize:CGSizeMake(DEFAULT_STATION_WIDTH, DEFAULT_STATION_HEIGHT)];
 		
         // no rows or columns are visible at first; note this by making the firsts very high and the lasts very low
-		firstVisibleRow = firstVisibleColumn = NSIntegerMax;
-		lastVisibleRow  = lastVisibleColumn  = NSIntegerMin;
+        firstVisibleRow = firstVisibleColumn = INT_MAX; // 64bit update this is a different size than an int NSIntegerMax;
+        lastVisibleRow  = lastVisibleColumn  = INT_MIN; // 64bit update: this is different size than an int NSIntegerMin;
 		
 		// create timer
 		m_pStationSelTimer = [NSTimer scheduledTimerWithTimeInterval:(1.0)
@@ -53,12 +53,12 @@
     [super dealloc];
 }
 
-- (void)setMaxStation:(int)numStations
+- (void)setMaxStation:(unsigned long)numStations
 {
 	m_maxStation = numStations;
 }
 
-- (int)getMaxStation
+- (unsigned long)getMaxStation
 {
 	return m_maxStation;
 }
@@ -108,8 +108,8 @@
     }
     
     // no rows or columns are now visible; note this by making the firsts very high and the lasts very low
-    firstVisibleRow = firstVisibleColumn = NSIntegerMax;
-    lastVisibleRow  = lastVisibleColumn  = NSIntegerMin;
+    firstVisibleRow = firstVisibleColumn = INT_MAX; //64 bit update this is not the same size as an int NSIntegerMax;
+    lastVisibleRow  = lastVisibleColumn  = INT_MAX; //64 bit update this is not the same size as an int NSIntegerMin;
     
     [self setNeedsLayout];
 }

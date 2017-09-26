@@ -18,7 +18,7 @@
     NSMutableSet						*reusableStations;    
     
 	// station controls
-	int									m_maxStation;
+	unsigned long									m_maxStation;  // 64 bit update
 	int									m_curStation;
 	int									m_prevStation;
 	NSTimer *							m_pStationSelTimer;
@@ -34,8 +34,8 @@
 - (UIView *)dequeueReusableStation;  // Used by the delegate to acquire an already allocated station, in lieu of allocating a new one.
 - (void)reloadData;
 - (void)reloadDataWithNewContentSize:(CGSize)size;
-- (void)setMaxStation:(int)numStations;
-- (int)getMaxStation;
+- (void)setMaxStation:(unsigned long )numStations; //64 bit update
+- (unsigned long )getMaxStation; //64 bit update
 - (void)setStation:(int)curStation;
 - (void)setCurStation:(int)curStation;
 - (int)getCurStation;

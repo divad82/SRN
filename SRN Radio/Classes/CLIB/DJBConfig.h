@@ -28,11 +28,11 @@ extern char		g_iphoneDocDirectory[1024];
 
 // PUBLIC FUNCTIONs
 extern void		InitDJBConfig(char * pConfigName);
-extern bool		LoadDJBData();
-extern void		SaveDJBData();
+extern bool		LoadDJBData(void);
+extern void		SaveDJBData(void);
 extern void		SetStation(char * pStationName);
-extern char *	GetStation();
+extern char *	GetStation(void);
 extern void		SetBackGndEnabled(int enabled);
-extern int		GetBackGndEnabled();
+extern int		GetBackGndEnabled(void);
 
 #endif
