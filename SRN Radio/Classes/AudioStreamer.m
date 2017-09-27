@@ -706,6 +706,8 @@ void ReadStreamCallBack
 @synthesize didErrorSelector;
 @synthesize didRedirectSelector;
 
+#define USE_NS_URL_SESSION 1
+
 //
 // initWithURL
 //
@@ -802,7 +804,7 @@ void ReadStreamCallBack
 	//
 	// If you have a fixed file-type, you may want to hardcode this.
 	//
-	AudioFileTypeID fileTypeHint = kAudioFileMP3Type;
+    AudioFileTypeID fileTypeHint = 0;//kAudioFileMP3Type;
 	NSString *fileExtension = [[url path] pathExtension];
 	if ([fileExtension isEqual:@"mp3"])
 	{
@@ -850,18 +852,55 @@ void ReadStreamCallBack
 									   fileTypeHint, &audioFileStream);
 	if (err) { PRINTERROR("AudioFileStreamOpen"); goto cleanup; }
 	
+#if USE_NS_URL_SESSION
+    
+    //NSOperationQueue *operationQueue = [NSOperationQueue mainQueue];
+    
+    NSURLSessionConfiguration *defaultConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    // Configuring caching behavior for the default session
+    NSString *cachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
+    NSString *cachePath = [cachesDirectory stringByAppendingPathComponent:@"MyCache"];
+    NSURLCache *cache = [[NSURLCache alloc] initWithMemoryCapacity:16384 diskCapacity:268435456 diskPath:cachePath];
+    defaultConfiguration.URLCache = cache;
+    defaultConfiguration.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
+    
+    NSURLSession *sessionWithoutADelegate = [NSURLSession sessionWithConfiguration:defaultConfiguration];
+    NSURL *urlNS = [NSURL URLWithString:@"http://www.sunshineradionetwork.com/play/listen.pls"];
+    
+    [[sessionWithoutADelegate dataTaskWithURL:urlNS completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSLog(@"Got response %@ with error %@.\n", response, error);
+        NSLog(@"DATA:\n%@\nEND DATA\n", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+              }] resume];
+#else
+    NSURLSessionConfiguration *backgroundConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier: @"com.myapp.networking.background"];
+    
+    NSOperationQueue *operationQueue = [NSOperationQueue mainQueue];
+    
+    NSURLSession *backgroundSession = [NSURLSession sessionWithConfiguration:backgroundConfiguration delegate:delegate delegateQueue:operationQueue];
+    //NSURL *url = [NSURL URLWithString:@"https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/ObjC_classic/FoundationObjC.pdf"];
+    NSURLSessionDownloadTask *downloadTask = [backgroundSession downloadTaskWithURL:url];
+    [downloadTask resume];
+   
 	//
 	// Create the GET request
 	//
 	CFHTTPMessageRef message= CFHTTPMessageCreateRequest(NULL, (CFStringRef)@"GET", (CFURLRef)url, kCFHTTPVersion1_1);
+    
+    NSLog(@"CF Message %@", message);
 	CFHTTPMessageSetHeaderFieldValue(message, CFSTR("Icy-MetaData"), CFSTR("1"));
 	// Should put a useragent in here!
-	
+	//CFReadStreamCreateForHTTPRequest' is deprecated: first deprecated in iOS 9.0 - Use NSURLSession API for http requests
 	stream = CFReadStreamCreateForHTTPRequest(NULL, message);
-	CFRelease(message);
+    
+    CFStreamError errCF =  CFReadStreamGetError(stream);
+
+    NSLog(@"CF Error %d", errCF.error);
+    CFStreamStatus  statusCF = CFReadStreamGetStatus( stream);
+    NSLog(@"CF Status %ld", statusCF);
+    CFRelease(message);
 	if (!CFReadStreamOpen(stream))
 	{
-		CFRelease(stream);
+	//D@H this is redundant?  	CFRelease(stream);
 		goto cleanup;
     }
 	
@@ -931,7 +970,7 @@ void ReadStreamCallBack
 			break;
 		}
 	} while (isPlaying || !finished);
-	
+#endif
 cleanup:
 	
 	

@@ -72,7 +72,8 @@
 	// method "reachabilityChanged" will be called. 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:@"kNetworkReachabilityChangedNotification" object:nil];
 	
-	containview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 460)];
+	//containview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 460)];
+    containview =  [[UIImageView alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
 	containview.backgroundColor = [UIColor blackColor];						// make background Transparent
 	containview.autoresizesSubviews = YES;									// Subview of main Frame can be auto resizable
 	
@@ -1076,7 +1077,7 @@
 	if ([self verifyConnection]) {
 		
 		//[containview setUserInteractionEnabled:YES];
-		[self startStopStream];	
+		[self startStopStream];
 		
 	}
 	
@@ -1084,10 +1085,14 @@
 	else {
 		
 		[loadingIndicatorView stopAnimating];
-		
+		/*
+         vUIAlertController *alert = [[UIAlertController alloc] initWithTitle:@"Connection Error" , preferredStyle: .alert
+         message:@"An Internet
+         */
 		// open an alert with just an OK button
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"An Internet connection could not be found. Please check your connection and try again."
 													   delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        //[alert preferredStyle]:UIAlertControllerStyleAlert;
 		[alert show];	
 		[alert release];	
 	}
@@ -1160,18 +1165,26 @@
 			}
 		}    
 #else
-		streamURL = [NSString stringWithFormat:@"streamURL%d", m_curBroadcastStationID+1];
-		
-		//NSLog(@"streamURL=%d",m_curBroadcastStationID);
-		//NSLog(@"temp=%d",streamBandwidthSelection);		
-		escapedValue =
+        streamURL = @"www.sunshineradionetwork.com/play/listen.pls";
+        //[NSString stringWithFormat:@"streamURL%d", m_curBroadcastStationID+1];
+        NSLog(@"%@", streamURL );
+		NSLog(@"streamURL=%d",m_curBroadcastStationID);
+		//NSLog(@"temp=%d",streamBandwidthSelection);
+        /*
+         CFURLCreateStringByAddingPercentEscapes' is deprecated: first deprecated in iOS 9.0 - Use [NSString stringByAddingPercentEncodingWithAllowedCharacters:] instead, which always uses the recommended UTF-8 encoding, and which encodes for a specific URL component or subcomponent (since each URL component or subcomponent has different rules for what characters are valid).
+         
+         */
+        
+        NSCharacterSet *allowedCharacters = [NSCharacterSet URLFragmentAllowedCharacterSet];
+        escapedValue = [streamURL stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
+		/*escapedValue =
 		[(NSString *)CFURLCreateStringByAddingPercentEscapes(
 															 nil,
 															 (CFStringRef)[customStringDict objectForKey:streamURL],
 															 NULL,
 															 NULL,
 															 kCFStringEncodingUTF8)
-		 autorelease];
+		 autorelease];*/
 #endif
 		
 		NSURL *url = [NSURL URLWithString:escapedValue];            
@@ -1529,7 +1542,7 @@
 
 - (int) GetSelectedPickerRowFromConfig
 {
-	int count = [m_arrayStations count];
+	unsigned long count = [m_arrayStations count];  //update to x64
 	char * pStation = GetStation();
 	char szPickerStation[128];
 	

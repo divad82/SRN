@@ -107,7 +107,7 @@ InitDJBConfig(char * pConfigName)
 	
 	if (!LoadDJBData()) {
 		g_config.m_ver = 1.0;
-		strcpy(g_config.m_stationName, (char *)"WebSiteName1");
+        strcpy(g_config.m_stationName, (char *)"www.sunshineradionetwork.com/play/listen.pls");//"WebSiteName1");
 	}
 }
 

@@ -242,7 +242,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				1BC2E4FB1F6F462500FBA791 /* Default-568h@2x.png */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -293,6 +292,7 @@
 		BDA16ACE12242B2A004C2C56 /* customization_these */ = {
 			isa = PBXGroup;
 			children = (
+				1BC2E4FB1F6F462500FBA791 /* Default-568h@2x.png */,
 				BD43C7A0123333E5003FAAAD /* WHITE.png */,
 				BDE98DB21231831B0045AB3D /* Localizable.strings */,
 				BDA16AD112242B71004C2C56 /* Info.png */,
