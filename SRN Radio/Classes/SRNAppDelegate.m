@@ -35,7 +35,10 @@
 	
 	ViewController = [[MyViewController alloc]init];
 	//[ViewController initialAdjustment];
-	[window addSubview: ViewController.view];
+	//[window addSubview: ViewController.view];
+    //to
+    
+    [self.window setRootViewController:ViewController];
 	
 	// Override point for customization after application launch
     [window makeKeyAndVisible];

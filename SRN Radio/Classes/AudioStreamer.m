@@ -706,7 +706,9 @@ void ReadStreamCallBack
 @synthesize didErrorSelector;
 @synthesize didRedirectSelector;
 
+#define USE_AVPLAYER 0
 #define USE_NS_URL_SESSION 1
+#define USE_SESSION 0
 
 //
 // initWithURL
@@ -782,6 +784,7 @@ void ReadStreamCallBack
 	// Set the audio session category so that we continue to play if the
 	// iPhone/iPod auto-locks.
 	//
+    //TODO: port this to use AVAudioSession
 	AudioSessionInitialize (
 							NULL,                          // 'NULL' to use the default (main) run loop
 							NULL,                          // 'NULL' to use the default run loop mode
@@ -851,8 +854,98 @@ void ReadStreamCallBack
 	OSStatus err = AudioFileStreamOpen(self, MyPropertyListenerProc, MyPacketsProc,
 									   fileTypeHint, &audioFileStream);
 	if (err) { PRINTERROR("AudioFileStreamOpen"); goto cleanup; }
-	
-#if USE_NS_URL_SESSION
+#if USE_AVPLAYER
+    AVPlayer *player = [AVPlayer playerWithURL:@"http://www.sunshineradionetwork.com/play/listen.pls"];
+    
+    // create a player view controller
+    UIPageViewController *controller = [[UIPageViewController alloc] init];
+    [self presentViewController:controller animated:YES completion:nil];
+  //  controller.player = player;
+    [player play];
+#elif USE_SESSION
+    NSURLSessionConfiguration *defaultConfiguration=[NSURLSessionConfiguration defaultSessionConfiguration];
+    
+    NSURLCache *cache=[[NSURLCache alloc] initWithMemoryCapacity: 16384 diskCapacity: 268435456 diskPath: @"/DataCache"];
+    defaultConfiguration.URLCache=cache;
+    defaultConfiguration.HTTPMaximumConnectionsPerHost=5;
+    
+    
+    //NSString *urlStr=@"http://api.openweathermap.org/data/2.5/weather?id=524901&APPID=f65070ff120b55ef1517f806c8f0eaa3";
+    NSString *urlStr =@"http://www.sunshineradionetwork.com/play/listen.pls";
+
+    //Comment code to run it without delegate with a completion handler
+    
+    NSURLSession *urlSession=[NSURLSession sessionWithConfiguration:defaultConfiguration];
+    NSLog(@"test");
+    //UnComment code to run it without delegate with a completion handler
+    NSLog(@"session : %@", urlSession.accessibilityLabel);
+    //   _urlSession=[NSURLSession sessionWithConfiguration:defaultConfiguration delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    
+    
+    NSURLRequest *request=[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];
+    NSLog(@"req : %@", request.HTTPMethod);
+    //Comment code to run it without delegate with a completion handler
+    
+    //  NSURLSessionDataTask *dataTask2=[_urlSession dataTaskWithRequest:request
+    
+    
+    NSURLSessionDataTask *dataTask=[urlSession dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+      //  NSDictionary *dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+        if (error != nil) {
+            NSLog(@"err :%@",[error localizedDescription]);
+        }
+        if (response !=nil) {
+            NSLog(@"resp: %@", [response MIMEType]);
+        }
+#ifdef TARGET_OS_IPHONE
+        
+        /*
+         UIAlertView *alert =
+         [[UIAlertView alloc]
+         initWithTitle:NSLocalizedStringFromTable(@"Audio Error", @"Errors", nil)
+         message:NSLocalizedStringFromTable(@"Attempt to play streaming audio failed.", @"Errors", nil)
+         delegate:self
+         cancelButtonTitle:@"OK"
+         otherButtonTitles: nil];
+         [alert
+         performSelector:@selector(show)
+         onThread:[NSThread mainThread]
+         withObject:nil
+         waitUntilDone:YES];
+         [alert release];
+         */
+        if (redirect)
+        {
+            [self redirectStreamError:url];
+        }
+        else
+        {
+            [self audioStreamerError];
+        }
+#else
+        NSAlert *alert =
+        [NSAlert
+         alertWithMessageText:NSLocalizedString(@"Audio Error", @"")
+         defaultButton:NSLocalizedString(@"OK", @"")
+         alternateButton:nil
+         otherButton:nil
+         informativeTextWithFormat:@"Attempt to play streaming audio failed."];
+        [alert
+         performSelector:@selector(runModal)
+         onThread:[NSThread mainThread]
+         withObject:nil waitUntilDone:NO];
+#endif
+    }];
+    
+    //UnComment code to run it without delegate with a completion handler
+    
+    /*
+     NSURLSessionDataTask *dataTask=[_urlSession dataTaskWithRequest:request];
+     _data=[NSMutableData data];
+     */
+    [dataTask resume];
+#elif USE_NS_URL_SESSION
     
     //NSOperationQueue *operationQueue = [NSOperationQueue mainQueue];
     

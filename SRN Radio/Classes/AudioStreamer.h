@@ -7,6 +7,7 @@
 
 #include <pthread.h>
 #include <AudioToolbox/AudioToolbox.h>
+#include <AVFoundation/AVPlayer.h>
 
 #define kNumAQBufs 6							// number of audio queue buffers we allocate
 #define kAQBufSize 32 * 1024		// number of bytes in each audio queue buffer
